@@ -16,15 +16,29 @@ var Converter = {
 		
 	},
 	decode: function (string) {
-		if (typeof string === 'string') {
-			var result = [];
-			for (var i = 1; i < string.length; i++) {
-				
+		var result = [];
+		var current = '';
+		var currentlyInString = false;
+		for (var i = 1; i < string.length - 1; i++) {
+			if (string[i] === '"') {
+				if (string[i - 1] === '\\') {
+					current += string[i];
+				} else {
+					currentlyInString = !currentlyInString;
+					if (!currentlyInString) {
+						result.push(current);
+						current = '';
+						i += 1;
+					}
+				}
+			} else {
+				if (currentlyInString) {
+					if (string[i] !== '\\') {
+						current += string[i];
+				}
 			}
-			return result;
-		} else {
-			throw new Error('decode only takes a string argument');
 		}
+		return result;
 	}
 };
 
@@ -36,27 +50,3 @@ function escapeQuotes(string) {
 	return string.replace(/"/g, '\\"');
 }
 
-function unwrap(str) {
-	return str.slice(1, -2);
-}
-
-function parse(string) {
-	var result = [];
-	var current = [];
-	var currentlyInString = false;
-	for (var i = 1; i < string.length - 1; i++) {
-		if (string[i] === '"' && !currentlyInString) {
-			currentlyInString = true;
-		} else {
-			if (string[i] === ',' && string[i + 1] === '"') {
-				result.push(current.join(''));
-				current = [];
-				currentlyInString = false;
-			} else {
-				current.push(string[i]);
-			}
-		}
-		
-	}
-	return result;
-}
