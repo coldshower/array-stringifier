@@ -40,7 +40,14 @@ var Converter = {
 					if (string[i] !== '\\') {
 						current += string[i];
 					}
+				} else {
+					if (Number(string[i])) {
+						var processNumberArray = processNumber(string, i);
+						result.push(processNumberArray[0]);
+						i = processNumberArray[1];
+					}
 				}
+				
 			}
 		}
 		return result;
@@ -53,5 +60,19 @@ function wrap(string) {
 
 function escapeQuotes(string) {
 	return string.replace(/"/g, '\\"');
+}
+
+function processNumber(string, start) {
+	var number = '';
+	var endIndex;
+	for (var i = start; i < string.length; i++) {
+		if (Number(string[i])) {
+			number += string[i];
+		} else {
+			endIndex = i;
+			break;
+		}
+	}
+	return [Number(number), endIndex];
 }
 
