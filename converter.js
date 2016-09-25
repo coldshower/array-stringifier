@@ -3,7 +3,11 @@ var Converter = {
 		if (Array.isArray(array)) {
 			var result = '[';
 			for (var i = 0; i < array.length; i++) {
-				result += wrap(escapeQuotes(array[i]));
+				if (typeof array[i] === 'string') {
+					result += wrap(escapeQuotes(array[i]));
+				} else if (typeof array[i] === 'number') {
+					result += array[i];
+				}
 				if (i < array.length - 1) {
 					result += ',';
 				}
@@ -35,6 +39,7 @@ var Converter = {
 				if (currentlyInString) {
 					if (string[i] !== '\\') {
 						current += string[i];
+					}
 				}
 			}
 		}
